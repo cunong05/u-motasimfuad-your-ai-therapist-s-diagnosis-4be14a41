@@ -1,27 +1,28 @@
-#!/usr/bin/env python3
-"""Your AI Therapist's Diagnosis — make.fun bounty entry.
+"""Save a short, funny therapist-style diagnosis as a single line of text.
 
-Writes one diagnosis line from an AI therapist to /output/entry.txt (outDir is the literal "/output", per the kit).
+Running this script creates the entry file the bounty expects and prints
+how many characters the entry contains, so the result is easy to check.
 """
 
-import os
-
-# Session notes: patient is the main character.
-ENTRY = "Diagnosis: chronic main-character syndrome, complicated by 47 open tabs and the emotional range of a loading spinner."
-
-OUT_DIR = "/output"
-OUT_PATH = os.path.join(OUT_DIR, "entry.txt")
+from pathlib import Path
 
 
-def main() -> None:
-    entry = ENTRY.strip()
-    assert entry, "entry must not be empty"
-    assert "\n" not in entry, "entry must be a single line"
-    assert 1 <= len(entry) <= 200, f"entry must be 1-200 chars, got {len(entry)}"
-    os.makedirs(OUT_DIR, exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        f.write(entry)
-    print(f"Wrote {len(entry)} characters to {OUT_PATH}")
+def main():
+    # One playful diagnosis line, kept short enough for the entry limit.
+    diagnosis_line = "Diagnosis: chronic main-character syndrome, complicated by 47 open tabs and the emotional range of a loading spinner."
+    if not diagnosis_line:
+        raise SystemExit("Entry is empty, so nothing was written.")
+    if "\n" in diagnosis_line or "\r" in diagnosis_line:
+        raise SystemExit("Entry must fit on one line without a line break inside it.")
+    entry_length = len(diagnosis_line)
+    if entry_length < 1 or entry_length > 200:
+        raise SystemExit(f"Entry length is {entry_length}, but it must be between 1 and 200 characters.")
+
+    output_folder = Path("/output")
+    output_folder.mkdir(parents=True, exist_ok=True)
+    entry_path = output_folder / "entry.txt"
+    entry_path.write_text(diagnosis_line, encoding="utf-8")
+    print(entry_length)
 
 
 if __name__ == "__main__":
